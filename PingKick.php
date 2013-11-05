@@ -1,0 +1,62 @@
+<?php
+
+/*
+__Pocketmine Plugin__
+name=PingKick
+description=Kicks a player with high ping
+version=1.0.0
+author=ZacHack
+class=pingkick
+apiversion=10
+*/
+
+class pingkick implements Plugin{
+	private $api, $config;
+	public function __construct(ServerAPI $api, $server = false){
+		$this->api = $api;
+		$this->server = ServerAPI::request();
+	}
+	public function init(){
+		$this->config = new Config($this->api->plugin->configPath($this)."settings.yml", CONFIG_YAML, array(
+			"PingKick" => "4000",
+			"Enabled" => "true",
+			"PingCheck" => "1",
+			));
+		$this->pingcheck = $this->config->get("PingCheck");
+		$this->pingkick = $this->config->get("PingKick");
+		$this->enabled = $this->config->get("Enabled");
+		$this->api->addHandler("player.spawn", array($this, "join"), 15);
+		if($this->enabled == "true"){
+			console("§a[PingKick] Enabled!");
+		}
+		if($this->enabled == "false"){
+			console("§e[PingKick] Disabled!");
+		}
+		if($this->pingcheck == 0){
+			console("§c[PingKick] PingCheck is set at 0! please set it greater than 0");
+		}
+		console("§9[PingKick] Set at ".$this->pingkick."ms");
+		console("§9[PingKick] Checking ping every ".$this->pingcheck." seconds");
+	}
+	public function join($data, $event){
+		switch($event){
+			case "player.spawn":
+				$this->api->schedule(20, array($this, "join"), array(), true);
+				$ping = round($data->getLag(), 2);
+				if($this->pingcheck !== 0){
+					if($this->enabled == "true"){
+						if($this->pingkick < $ping){
+							$this->server->api->ban->kick($data->username, "Ping was too high");
+						}else{
+							break;
+						}
+					}else{
+						break;//this function looks like a jet fighter lol :P
+					}
+				}else{
+					break;
+				}
+		}
+	}
+	public function __destruct(){}
+}
