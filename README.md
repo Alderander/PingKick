@@ -1,0 +1,4 @@
+PingKick
+========
+
+Kicks laggy players
