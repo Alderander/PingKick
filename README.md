@@ -1,4 +1,4 @@
 PingKick
 ========
 
-Kicks laggy players
+Kicks laggy players on pocketmine servers
