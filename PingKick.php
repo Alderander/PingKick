@@ -4,7 +4,7 @@
 __Pocketmine Plugin__
 name=PingKick
 description=Kicks a player with high ping
-version=1.0.0
+version=1.1.0
 author=ZacHack
 class=pingkick
 apiversion=10
@@ -26,6 +26,7 @@ class pingkick implements Plugin{
 		$this->pingkick = $this->config->get("PingKick");
 		$this->enabled = $this->config->get("Enabled");
 		$this->api->addHandler("player.spawn", array($this, "join"), 15);
+		$this->api->console->register("pingkick", "pingkick commands", array($this, "cmd"));
 		if($this->enabled == "true"){
 			console("§a[PingKick] Enabled!");
 		}
@@ -57,6 +58,58 @@ class pingkick implements Plugin{
 					break;
 				}
 		}
+	}
+	public function cmd($cmd, $args, $issuer){
+		$num = $args[1];
+		switch($cmd){
+			case "pingkick":
+				switch($args[0]){
+					case "set":
+						/*
+						if($args[1] !== 1-99999999999999999999999999999){
+							$output = "[PingKick] Please set it to a number";
+							break;
+						}else{
+							$this->config->set("PingKick", "".$num."");
+							console("[PingKick] set at ".$num."ms");
+						*/
+							$output = "[PingKick] Not supported yet but im working on it :)";
+							break;
+					case "enable":
+						$this->config->set("Enabled", "true");
+						$this->config->save();
+						$output = "[PingKick] Please restart the server for effect";
+						break;
+					case "disable":
+						$this->config->set("Enabled", "false");
+						$this->config->save();
+						$output = "[PingKick] Please restart the server for effect";
+						break;
+					case "check":
+						$this->config->set("PingCheck", "".$num."");
+						$this->config->save();
+						$output = "[PingKick] Please restart the server for effect";
+						break;
+					case "status":
+						if($issuer instanceOf Player){
+							$output = "[PingKick] Please use this command in console";
+							break;
+						}
+						if($this->enabled == "true"){
+							console("§a[PingKick] Enabled!");
+						}
+						if($this->enabled == "false"){
+							console("§e[PingKick] Disabled!");
+						}
+						if($this->pingcheck == 0){
+							console("§c[PingKick] PingCheck is set at 0! please set it greater than 0");
+						}
+						console("§9[PingKick] Set at ".$this->pingkick."ms");
+						console("§9[PingKick] Checking ping every ".$this->pingcheck." seconds");
+						break;
+				}
+		return $output;
+		}			
 	}
 	public function __destruct(){}
 }
